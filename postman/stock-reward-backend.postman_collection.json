@@ -2,12 +2,17 @@
 	"info": {
 		"_postman_id": "stock-reward-backend-001",
 		"name": "Stock Reward Backend API",
-		"description": "Complete API collection for Stock Reward Backend system with idempotency, double-entry ledger, and portfolio analytics",
+		"description": "Complete API collection for Stock Reward Backend system. Live on Render: https://stocky-pvci.onrender.com",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "base_url",
+			"value": "https://stocky-pvci.onrender.com/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "local_url",
 			"value": "http://localhost:8080/api/v1",
 			"type": "string"
 		},
@@ -24,14 +29,95 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/health",
-					"protocol": "http",
-					"host": ["localhost"],
-					"port": "8080",
-					"path": ["health"]
+					"raw": "https://stocky-pvci.onrender.com/health",
+					"protocol": "https",
+					"host": [
+						"stocky-pvci",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"health"
+					]
 				},
 				"description": "Check service health and database connectivity"
 			}
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"USR004\",\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Create a new user in the system"
+					}
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get user details by user_id"
+					}
+				},
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users?limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "List all users with pagination"
+					}
+				}
+			]
 		},
 		{
 			"name": "Price Management",
@@ -43,8 +129,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/prices/update",
-							"host": ["{{base_url}}"],
-							"path": ["prices", "update"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"prices",
+								"update"
+							]
 						},
 						"description": "Manually trigger price update for all supported stocks"
 					}
@@ -56,8 +147,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/prices/update/AAPL",
-							"host": ["{{base_url}}"],
-							"path": ["prices", "update", "AAPL"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"prices",
+								"update",
+								"AAPL"
+							]
 						},
 						"description": "Update price for a specific stock symbol"
 					}
@@ -69,8 +166,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/prices/AAPL",
-							"host": ["{{base_url}}"],
-							"path": ["prices", "AAPL"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"prices",
+								"AAPL"
+							]
 						},
 						"description": "Get the latest price for a stock symbol"
 					}
@@ -82,8 +184,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/prices/AAPL/history?limit=10",
-							"host": ["{{base_url}}"],
-							"path": ["prices", "AAPL", "history"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"prices",
+								"AAPL",
+								"history"
+							],
 							"query": [
 								{
 									"key": "limit",
@@ -101,8 +209,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/prices/stocks",
-							"host": ["{{base_url}}"],
-							"path": ["prices", "stocks"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"prices",
+								"stocks"
+							]
 						},
 						"description": "Get list of all supported stock symbols"
 					}
@@ -128,8 +241,12 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/reward",
-							"host": ["{{base_url}}"],
-							"path": ["reward"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reward"
+							]
 						},
 						"description": "Create a new stock reward with idempotency"
 					}
@@ -150,8 +267,12 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/reward",
-							"host": ["{{base_url}}"],
-							"path": ["reward"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reward"
+							]
 						},
 						"description": "Test idempotency - same event_id should return previous result"
 					}
@@ -172,8 +293,12 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/reward",
-							"host": ["{{base_url}}"],
-							"path": ["reward"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reward"
+							]
 						},
 						"description": "Create a negative reward for adjustments"
 					}
@@ -185,8 +310,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/reward/EVT-2024-001",
-							"host": ["{{base_url}}"],
-							"path": ["reward", "EVT-2024-001"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reward",
+								"EVT-2024-001"
+							]
 						},
 						"description": "Retrieve a specific reward by event ID"
 					}
@@ -198,8 +328,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/rewards/{{user_id}}?limit=10&offset=0",
-							"host": ["{{base_url}}"],
-							"path": ["rewards", "{{user_id}}"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rewards",
+								"{{user_id}}"
+							],
 							"query": [
 								{
 									"key": "limit",
@@ -226,8 +361,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/today-stocks/{{user_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["today-stocks", "{{user_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"today-stocks",
+								"{{user_id}}"
+							]
 						},
 						"description": "Get all stock rewards received today for a user"
 					}
@@ -239,8 +379,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/historical-inr/{{user_id}}?start_date=2024-01-01&end_date=2024-12-31",
-							"host": ["{{base_url}}"],
-							"path": ["historical-inr", "{{user_id}}"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"historical-inr",
+								"{{user_id}}"
+							],
 							"query": [
 								{
 									"key": "start_date",
@@ -262,8 +407,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/stats/{{user_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["stats", "{{user_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"stats",
+								"{{user_id}}"
+							]
 						},
 						"description": "Get aggregated statistics for a user"
 					}
@@ -275,8 +425,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/portfolio/{{user_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["portfolio", "{{user_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"portfolio",
+								"{{user_id}}"
+							]
 						},
 						"description": "Get complete portfolio with current valuations and P&L"
 					}
@@ -288,8 +443,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/holdings/{{user_id}}?date=2024-01-15",
-							"host": ["{{base_url}}"],
-							"path": ["holdings", "{{user_id}}"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"holdings",
+								"{{user_id}}"
+							],
 							"query": [
 								{
 									"key": "date",

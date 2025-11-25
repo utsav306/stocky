@@ -107,9 +107,16 @@ The server will start on `http://localhost:8080`
 
 ## 📡 API Documentation
 
-### Base URL
+### Base URLs
+
+**Production (Render):**
 ```
-http://localhost:8080/api/v1
+https://stocky-pvci.onrender.com
+```
+
+**Local Development:**
+```
+http://localhost:8080
 ```
 
 ### Endpoints
@@ -117,6 +124,30 @@ http://localhost:8080/api/v1
 #### Health Check
 ```http
 GET /health
+```
+
+#### User Management
+
+**Create User**
+```http
+POST /api/v1/users
+Content-Type: application/json
+
+{
+  "user_id": "USR004",
+  "name": "John Doe",
+  "email": "john.doe@example.com"
+}
+```
+
+**Get User**
+```http
+GET /api/v1/users/:userId
+```
+
+**List Users**
+```http
+GET /api/v1/users?limit=10&offset=0
 ```
 
 #### Price Management
@@ -403,6 +434,67 @@ go test ./internal/services/...
 ```
 
 ## 📦 Deployment
+
+### Deploying to Render
+
+This application is deployed on Render at: **https://stocky-pvci.onrender.com**
+
+#### Quick Deploy Steps
+
+1. **Push your code to GitHub**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin <your-repo-url>
+   git push -u origin main
+   ```
+
+2. **Create a new Web Service on Render**
+   - Go to [render.com](https://render.com)
+   - Click **New** → **Web Service**
+   - Connect your GitHub repository
+   - Configure the service:
+     - **Name:** stocky (or your preferred name)
+     - **Environment:** Go
+     - **Build Command:** `go build -o main cmd/main.go`
+     - **Start Command:** `./main`
+
+3. **Set Environment Variables**
+   
+   In Render dashboard, add these environment variables:
+   
+   ```bash
+   DATABASE_URL=<your-supabase-connection-string>
+   PORT=8080
+   GIN_MODE=release
+   LOG_LEVEL=info
+   LOG_FORMAT=json
+   ```
+
+4. **Deploy!**
+   - Render will automatically build and deploy your app
+   - Your API will be live at `https://your-app-name.onrender.com`
+
+#### Testing Your Deployment
+
+```bash
+# Health check
+curl https://stocky-pvci.onrender.com/health
+
+# Get supported stocks
+curl https://stocky-pvci.onrender.com/api/v1/prices/stocks
+
+# Get latest price for AAPL
+curl https://stocky-pvci.onrender.com/api/v1/prices/AAPL
+```
+
+#### Render-Specific Notes
+
+- **Free Tier:** Apps spin down after 15 minutes of inactivity (first request may be slow)
+- **Auto-Deploy:** Render automatically deploys when you push to your main branch
+- **Logs:** View real-time logs in the Render dashboard
+- **Custom Domain:** You can add a custom domain in the settings
 
 ### Docker (Optional)
 

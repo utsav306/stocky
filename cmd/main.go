@@ -93,6 +93,7 @@ func main() {
 	defer priceService.Stop()
 
 	// Initialize controllers
+	userController := controllers.NewUserController(userRepo, log)
 	priceController := controllers.NewPriceController(priceService, log)
 	rewardController := controllers.NewRewardController(rewardService, log)
 	portfolioController := controllers.NewPortfolioController(portfolioService, log)
@@ -111,7 +112,7 @@ func main() {
 	router.Use(corsMiddleware())
 
 	// Register routes
-	registerRoutes(router, priceController, rewardController, portfolioController)
+	registerRoutes(router, userController, priceController, rewardController, portfolioController)
 
 	// Get port from environment
 	port := os.Getenv("PORT")
@@ -231,6 +232,7 @@ func initDatabase() error {
 // registerRoutes sets up all our API endpoints
 func registerRoutes(
 	router *gin.Engine,
+	userController *controllers.UserController,
 	priceController *controllers.PriceController,
 	rewardController *controllers.RewardController,
 	portfolioController *controllers.PortfolioController,
@@ -241,6 +243,11 @@ func registerRoutes(
 	// All our main API routes under /api/v1
 	v1 := router.Group("/api/v1")
 	{
+		// User management endpoints
+		v1.POST("/users", userController.CreateUser)
+		v1.GET("/users/:userId", userController.GetUser)
+		v1.GET("/users", userController.ListUsers)
+
 		// Stock price related endpoints
 		v1.POST("/prices/update", priceController.TriggerPriceUpdate)
 		v1.POST("/prices/update/:symbol", priceController.UpdateSingleStockPrice)
