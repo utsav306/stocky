@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"stockBackend/internal/models"
 	"stockBackend/internal/repository"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -126,13 +127,13 @@ func (uc *UserController) ListUsers(c *gin.Context) {
 	offset := 0
 	
 	if l := c.Query("limit"); l != "" {
-		if parsed, err := parseIntParam(l); err == nil && parsed > 0 {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 {
 			limit = parsed
 		}
 	}
 	
 	if o := c.Query("offset"); o != "" {
-		if parsed, err := parseIntParam(o); err == nil && parsed >= 0 {
+		if parsed, err := strconv.Atoi(o); err == nil && parsed >= 0 {
 			offset = parsed
 		}
 	}
