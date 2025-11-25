@@ -1,0 +1,67 @@
+## Context  
+Stocky is a hypothetical company where users can earn **shares of Indian stocks** (e.g., Reliance, TCS, Infosys) as incentives for actions like onboarding, referrals, or trading milestones.  
+
+When a user is rewarded:  
+- They always receive the full stock units (no deductions).  
+- Stocky purchases those shares from NSE/BSE and pays the necessary brokerage, taxes, and regulatory fees.  
+- These fees are not visible to the user but must be tracked internally in the company’s ledger.  
+
+Every hour, the system must fetch the latest stock prices to update the INR valuation of all user holdings. For now, this can be a hypothetical service which gives random prices given a stock.
+
+---
+
+## Your Tasks  
+
+### 1. Design APIs  
+Implement REST endpoints for the following:  
+
+- **`POST /reward`** – Record that a user has been rewarded *X* shares of a stock (e.g., `RELIANCE`) at a given timestamp.  
+- **`GET /today-stocks/{userId}`** – Return all stock rewards for the user for today.  
+- **`GET /historical-inr/{userId}`** – Return the INR value of the user’s stock rewards for all past days (up to yesterday).  
+- **`GET /stats/{userId}`** – Return:  
+  - Total shares rewarded today (grouped by stock symbol).  
+  - Current INR value of the user’s portfolio.  
+
+*(Bonus: Add `/portfolio/{userId}` to show holdings per stock symbol with current INR value.)*  
+
+---
+
+### 2. Database Schema  
+Propose tables that support:  
+- Recording reward events (who, what stock, how many, when).  
+- A double-entry ledger system that tracks:  
+  - Stock units (by symbol).  
+  - INR cash outflow.  
+  - Company-incurred fees (brokerage, STT, GST, etc.).  
+
+---
+
+### 3. Data Types  
+- Stock quantities → allow fractional shares (`NUMERIC(18, 6)` or similar).  
+- INR amounts → precise decimals (`NUMERIC(18, 4)`).  
+
+---
+
+### 4. Bonus edge cases to handle  
+- Duplicate reward events / replay attacks.  
+- Stock splits, mergers, or delisting.  
+- Rounding errors in INR valuation.  
+- Price API downtime or stale data.  
+- Adjustments/refunds of previously given rewards.  
+
+---
+
+## Deliverables  
+- Public github repo containing the codebase for this assignment
+- API specifications (request/response payloads)
+- Database schema with relationships
+- Explanation of how your system handles edge cases and scaling
+- 
+
+Instructions:
+1. Write the assignment in Golang. Use "gin" and "github.com/sirupsen/logrus" module for router and logging.
+2. Create a GitHub repo and send us a mail with the link of the Github repo.
+3. Add a readme.md file to give a brief explanation on the code.
+4. If DB is required, use postgress and keep the name of your DB as an "assignment"
+5. Attach Postman collection in the GitHub repo.
+6. Share the .env file if required.

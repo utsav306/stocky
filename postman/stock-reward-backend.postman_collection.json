@@ -1,0 +1,306 @@
+{
+	"info": {
+		"_postman_id": "stock-reward-backend-001",
+		"name": "Stock Reward Backend API",
+		"description": "Complete API collection for Stock Reward Backend system with idempotency, double-entry ledger, and portfolio analytics",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "USR001",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/health",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["health"]
+				},
+				"description": "Check service health and database connectivity"
+			}
+		},
+		{
+			"name": "Price Management",
+			"item": [
+				{
+					"name": "Trigger Price Update (All Stocks)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/prices/update",
+							"host": ["{{base_url}}"],
+							"path": ["prices", "update"]
+						},
+						"description": "Manually trigger price update for all supported stocks"
+					}
+				},
+				{
+					"name": "Update Single Stock Price",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/prices/update/AAPL",
+							"host": ["{{base_url}}"],
+							"path": ["prices", "update", "AAPL"]
+						},
+						"description": "Update price for a specific stock symbol"
+					}
+				},
+				{
+					"name": "Get Latest Price",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/prices/AAPL",
+							"host": ["{{base_url}}"],
+							"path": ["prices", "AAPL"]
+						},
+						"description": "Get the latest price for a stock symbol"
+					}
+				},
+				{
+					"name": "Get Price History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/prices/AAPL/history?limit=10",
+							"host": ["{{base_url}}"],
+							"path": ["prices", "AAPL", "history"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get historical prices for a stock"
+					}
+				},
+				{
+					"name": "Get Supported Stocks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/prices/stocks",
+							"host": ["{{base_url}}"],
+							"path": ["prices", "stocks"]
+						},
+						"description": "Get list of all supported stock symbols"
+					}
+				}
+			]
+		},
+		{
+			"name": "Reward Management",
+			"item": [
+				{
+					"name": "Create Reward",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"USR001\",\n  \"stock_symbol\": \"AAPL\",\n  \"quantity\": 10.5,\n  \"event_id\": \"EVT-2024-001\",\n  \"event_timestamp\": \"2024-01-15T10:30:00Z\",\n  \"event_type\": \"REWARD\",\n  \"notes\": \"Performance bonus Q1 2024\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reward",
+							"host": ["{{base_url}}"],
+							"path": ["reward"]
+						},
+						"description": "Create a new stock reward with idempotency"
+					}
+				},
+				{
+					"name": "Create Reward (Duplicate Test)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"USR001\",\n  \"stock_symbol\": \"AAPL\",\n  \"quantity\": 10.5,\n  \"event_id\": \"EVT-2024-001\",\n  \"event_timestamp\": \"2024-01-15T10:30:00Z\",\n  \"event_type\": \"REWARD\",\n  \"notes\": \"Performance bonus Q1 2024\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reward",
+							"host": ["{{base_url}}"],
+							"path": ["reward"]
+						},
+						"description": "Test idempotency - same event_id should return previous result"
+					}
+				},
+				{
+					"name": "Create Negative Reward (Adjustment)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"USR001\",\n  \"stock_symbol\": \"AAPL\",\n  \"quantity\": -2.5,\n  \"event_id\": \"EVT-2024-ADJ-001\",\n  \"event_timestamp\": \"2024-01-16T14:00:00Z\",\n  \"event_type\": \"ADJUSTMENT\",\n  \"notes\": \"Correction for overpayment\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reward",
+							"host": ["{{base_url}}"],
+							"path": ["reward"]
+						},
+						"description": "Create a negative reward for adjustments"
+					}
+				},
+				{
+					"name": "Get Reward by Event ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reward/EVT-2024-001",
+							"host": ["{{base_url}}"],
+							"path": ["reward", "EVT-2024-001"]
+						},
+						"description": "Retrieve a specific reward by event ID"
+					}
+				},
+				{
+					"name": "Get User Rewards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/rewards/{{user_id}}?limit=10&offset=0",
+							"host": ["{{base_url}}"],
+							"path": ["rewards", "{{user_id}}"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Get all rewards for a user with pagination"
+					}
+				}
+			]
+		},
+		{
+			"name": "Portfolio & Analytics",
+			"item": [
+				{
+					"name": "Get Today's Stocks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/today-stocks/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["today-stocks", "{{user_id}}"]
+						},
+						"description": "Get all stock rewards received today for a user"
+					}
+				},
+				{
+					"name": "Get Historical INR",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/historical-inr/{{user_id}}?start_date=2024-01-01&end_date=2024-12-31",
+							"host": ["{{base_url}}"],
+							"path": ["historical-inr", "{{user_id}}"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-31"
+								}
+							]
+						},
+						"description": "Get historical INR values for a date range"
+					}
+				},
+				{
+					"name": "Get User Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/stats/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["stats", "{{user_id}}"]
+						},
+						"description": "Get aggregated statistics for a user"
+					}
+				},
+				{
+					"name": "Get User Portfolio",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/portfolio/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["portfolio", "{{user_id}}"]
+						},
+						"description": "Get complete portfolio with current valuations and P&L"
+					}
+				},
+				{
+					"name": "Get Daily Holdings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/holdings/{{user_id}}?date=2024-01-15",
+							"host": ["{{base_url}}"],
+							"path": ["holdings", "{{user_id}}"],
+							"query": [
+								{
+									"key": "date",
+									"value": "2024-01-15"
+								}
+							]
+						},
+						"description": "Get holdings for a specific date"
+					}
+				}
+			]
+		}
+	]
+}
